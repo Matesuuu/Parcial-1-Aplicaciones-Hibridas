@@ -10,8 +10,6 @@ Sistema backend de gestion de productos, categorias, comentarios y usuarios con 
 - JSON Web Tokens (JWT)
 - Mongoose
 
-Mateo Garcia Bermudez
-
 ## Uso
 
 ejemplos de peticiones
