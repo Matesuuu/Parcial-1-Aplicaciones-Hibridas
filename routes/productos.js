@@ -3,6 +3,7 @@ const router = express.Router();
 const Producto = require("../models/producto");
 const Categoria = require("../models/categoria");
 
+const verificarToken = require("../middleware/verificarToken");
 router.get("/productos", async (req, res) => {
   try {
     const productos = await Producto.find();
@@ -28,7 +29,7 @@ router.get("/productos/:id", async (req, res) => {
   }
 });
 
-router.post("/productos", async (req, res) => {
+router.post("/productos", verificarToken, async (req, res) => {
   try {
     const categoriaId = req.body.category;
     const categoria = await Categoria.findOne({ idCategoria: categoriaId });
@@ -49,7 +50,7 @@ router.post("/productos", async (req, res) => {
   }
 });
 
-router.put("/productos/:id", async (req, res) => {
+router.put("/productos/:id", verificarToken, async (req, res) => {
   try {
     const producto = await Producto.findById(req.params.id);
 
@@ -75,7 +76,7 @@ router.put("/productos/:id", async (req, res) => {
   }
 });
 
-router.delete("/productos/:id", async (req, res) => {
+router.delete("/productos/:id", verificarToken, async (req, res) => {
   try {
     const productoEliminado = await Producto.findByIdAndRemove(req.params.id);
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Categoria = require("../models/categoria");
+const verificarToken = require("../middleware/verificarToken");
 
 router.get("/categorias/", async (req, res) => {
   try {
@@ -11,7 +12,7 @@ router.get("/categorias/", async (req, res) => {
   }
 });
 
-router.post("/categorias/", async (req, res) => {
+router.post("/categorias/", verificarToken, async (req, res) => {
   const nuevaCategoria = new Categoria(req.body);
   try {
     const categoriaGuardada = await nuevaCategoria.save();
@@ -33,7 +34,7 @@ router.get("/categorias/:id", async (req, res) => {
   }
 });
 
-router.patch("/categorias/:id", async (req, res) => {
+router.patch("/categorias/:id", verificarToken, async (req, res) => {
   try {
     const categoria = await Categoria.findByIdAndUpdate(
       req.params.id,
@@ -49,7 +50,7 @@ router.patch("/categorias/:id", async (req, res) => {
   }
 });
 
-router.delete("/categorias/:id", async (req, res) => {
+router.delete("/categorias/:id", verificarToken, async (req, res) => {
   try {
     const categoria = await Categoria.findByIdAndRemove(req.params.id);
     if (!categoria) {

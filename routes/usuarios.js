@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
 const Usuario = require("../models/usuario");
+
 const verificarToken = require("../middleware/verificarToken");
 
 router.get("/usuarios", verificarToken, async (req, res) => {
@@ -38,21 +39,20 @@ router.post("/registro", async (req, res) => {
 
 router.post("/autenticacion", async (req, res) => {
   try {
-    const usuario = await Usuario.findOne({ username: req.body.username });
+    const usuario = await Usuario.findOne({ email: req.body.email });
 
     if (!usuario) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
-    const contrasenaValida = await compare(req.body.password, usuario.password);
-
-    if (!contrasenaValida) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+    if (req.body.password !== usuario.password) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
     }
 
     const token = jwt.sign({ usuarioId: usuario._id }, "mateoGarciaBermudez", {
       expiresIn: "1h",
     });
+
     res.json({ token });
   } catch (error) {
     res.status(500).json({ error: "Error en la autenticación de usuario" });
@@ -88,7 +88,7 @@ router.post("/usuarios", async (req, res) => {
   }
 });
 
-router.put("/usuarios/:id", async (req, res) => {
+router.put("/usuarios/:id", verificarToken, async (req, res) => {
   try {
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
       req.params.id,
@@ -109,7 +109,7 @@ router.put("/usuarios/:id", async (req, res) => {
   }
 });
 
-router.delete("/usuarios/:id", async (req, res) => {
+router.delete("/usuarios/:id", verificarToken, async (req, res) => {
   try {
     const usuarioEliminado = await Usuario.findByIdAndRemove(req.params.id);
 
